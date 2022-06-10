@@ -7,7 +7,10 @@ Note:
     Simulate python's import system manually.
 """
 import importlib
-import importlib.metadata
+try:
+    from importlib import metadata
+except ImportError:  # for Python < 3.8
+    import importlib_metadata as metadata
 import pathlib
 import textwrap
 from logging import getLogger

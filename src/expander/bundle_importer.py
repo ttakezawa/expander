@@ -12,7 +12,10 @@ Note:
 """
 
 import ast
-import importlib.metadata
+try:
+    from importlib import metadata
+except ImportError:  # for Python < 3.8
+    import importlib_metadata as metadata
 import sys
 import textwrap
 from logging import getLogger
@@ -138,7 +141,7 @@ def make_info(bundled_modules: Set[str]) -> Optional[str]:
         included in all installed packages.
     """
     pkgs = set()
-    for dist in importlib.metadata.distributions():
+    for dist in metadata.distributions():
         tops = dist.read_text("top_level.txt")
         if tops is None:
             continue
@@ -152,7 +155,7 @@ def make_info(bundled_modules: Set[str]) -> Optional[str]:
     sep = "# " + "-" * 77 + "\n"
     result: List[str] = ["\n# package infomations\n", sep]
     for pkg in sorted(list(pkgs)):
-        dist = importlib.metadata.distribution(pkg)
+        dist = metadata.distribution(pkg)
         result.append(f'# {dist.metadata["Name"]}\n')
         for field in ["Version", "Author", "Home-page", "License"]:
             if field in dist.metadata:
